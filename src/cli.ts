@@ -1,12 +1,8 @@
 #!/usr/bin/env node
+import { resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { resolve } from "path";
 import { generateTests, type TestRunner } from "./generate-tests.ts";
-import { testSuiteCommit } from "./test-data.ts";
-
-// @ts-ignore — resolved at build time by bun's bundler
-import pkg from "../package.json" with { type: "json" };
-const VERSION = pkg.version;
+import { packageVersion, testSuiteCommit } from "./test-data.ts";
 
 const RUNNERS = ["bun", "vitest", "jest"] as const;
 
@@ -23,7 +19,7 @@ const { values } = parseArgs({
 });
 
 if (values.version) {
-  console.log(`${VERSION}`);
+  console.log(`${packageVersion}`);
   console.log(`test-suite: ${testSuiteCommit} (https://github.com/json-schema-org/JSON-Schema-Test-Suite/tree/${testSuiteCommit})`);
   process.exit(0);
 }

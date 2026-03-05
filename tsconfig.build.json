@@ -8,6 +8,6 @@
     "outDir": "dist",
     "rewriteRelativeImportExtensions": true
   },
-  "include": ["index.ts", "src/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["src/build-test-data.ts", "**/*.test.ts"]
 }

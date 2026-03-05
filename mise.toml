@@ -6,3 +6,14 @@ bun = "latest"
 [tasks.publint]
 run = "bun run build && publint"
 description = "Build and run publint"
+
+[tasks.test-pack]
+run = """
+rm -rf dist unpacked *.tgz
+npm pack
+mkdir -p unpacked
+tar xzf *.tgz -C unpacked --strip-components=1
+echo "Unpacked to unpacked/"
+ls -R unpacked/
+"""
+description = "Clean, pack, and unpack to unpacked/ for inspection"

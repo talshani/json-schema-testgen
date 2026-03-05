@@ -12,17 +12,16 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "json-schema-testgen": "./dist/src/cli.js"
+    "json-schema-testgen": "./dist/cli.js"
   },
   "files": [
-    "dist",
-    "setup.ts"
+    "dist"
   ],
   "scripts": {
     "build-data": "bun src/build-test-data.ts",
     "generate": "bun src/cli.ts",
     "build": "bun run build-data && bunx tsc -p tsconfig.build.json",
-    "prepublishOnly": "bun run build"
+    "prepack": "bun run build"
   },
   "devDependencies": {
     "@types/bun": "latest"
