@@ -4,7 +4,23 @@ Generate test files from the official [JSON-Schema-Test-Suite](https://github.co
 
 Currently generates TypeScript tests for [Bun](https://bun.sh). Multi-language support is planned.
 
-## Setup
+## Install via mise
+
+Add to your project's `mise.toml`:
+
+```toml
+[tools]
+"github:talshani/json-schema-testgen" = "latest"
+```
+
+Then run:
+
+```bash
+mise install
+json-schema-testgen --help
+```
+
+## Setup (development)
 
 ```bash
 bun install
