@@ -8,6 +8,6 @@
 //
 // If your implementation needs remote schema resolution,
 // configure it here (e.g. mapping http://localhost:1234/* to official-tests/remotes/).
-globalThis.__jsonSchemaTestgenValidate = (schema, data, draft) => {
+globalThis.__jsonSchemaTestgenValidate = (schema, data, draft, options) => {
   throw new Error("TODO: plug in your validator");
 };

@@ -15,7 +15,8 @@ export interface GenerateOptions {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const ADAPTER_DTS = `type ValidateResult = { valid: boolean; errors?: string[] };
-type ValidateFn = (schema: unknown, data: unknown, draft: string) => ValidateResult;
+type ValidateOptions = { formatAssertion?: boolean };
+type ValidateFn = (schema: unknown, data: unknown, draft: string, options: ValidateOptions) => ValidateResult;
 
 declare global {
   var __jsonSchemaTestgenValidate: ValidateFn;
@@ -72,11 +73,17 @@ export function generateTests(options: GenerateOptions = {}) {
       const adapterRelPath = relative(outDir, join(outputDir, "adapter.d.ts")).split(sep).join("/");
       const stem = key.split("/").pop()!;
 
+      const isFormatOptional = /^optional[/\\]format([/\\]|$)/.test(key);
+      const optionsStr = isFormatOptional
+        ? `{ formatAssertion: true }`
+        : `{}`;
+
       let code = `// Auto-generated test file\n`;
       code += `/// <reference path="${adapterRelPath}" />\n`;
       code += testImportLine(runner);
       code += `const validate = globalThis.__jsonSchemaTestgenValidate;\n\n`;
-      code += `const draft = ${JSON.stringify(draft)};\n\n`;
+      code += `const draft = ${JSON.stringify(draft)};\n`;
+      code += `const options = ${optionsStr};\n\n`;
       code += `describe(${JSON.stringify(stem)}, () => {\n`;
 
       for (const group of groups) {
@@ -95,7 +102,7 @@ export function generateTests(options: GenerateOptions = {}) {
 
           code += `    test(${testDesc}, () => {\n`;
           code += `      const data = ${dataStr};\n`;
-          code += `      const result = validate(schema, data, draft);\n\n`;
+          code += `      const result = validate(schema, data, draft, options);\n\n`;
           code += `      if (result.valid !== ${expected}) {\n`;
           code += `        const detail = [\n`;
           code += `          \`Schema: \${JSON.stringify(schema, null, 2)}\`,\n`;
