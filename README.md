@@ -2,57 +2,55 @@
 
 Generate test files from the official [JSON-Schema-Test-Suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite) for validating JSON Schema implementations.
 
-Currently generates TypeScript tests for [Bun](https://bun.sh). Multi-language support is planned.
+Supports generating tests for [Bun](https://bun.sh), [Vitest](https://vitest.dev), and [Jest](https://jestjs.io).
 
-## Install via mise
-
-Add to your project's `mise.toml`:
-
-```toml
-[tools]
-"github:talshani/json-schema-testgen" = "latest"
-```
-
-Then run:
+## Usage
 
 ```bash
-mise install
-json-schema-testgen --help
-```
+# With npx
+npx json-schema-testgen --help
 
-## Setup (development)
-
-```bash
-bun install
-git submodule update --init   # fetch the official test suite
-bun run build-data            # embed test data into src/test-data.ts
+# With bunx
+bunx json-schema-testgen --help
 ```
 
 ## Generating tests
 
 ```bash
-# Generate required tests for all drafts
-bun run generate
+# Generate required tests for all drafts (default runner: bun)
+npx json-schema-testgen
+
+# Generate tests for vitest or jest
+npx json-schema-testgen --runner vitest
+npx json-schema-testgen --runner jest
 
 # Generate only specific drafts
-bun run generate -- --drafts draft7,draft2020-12
+npx json-schema-testgen --drafts draft7,draft2020-12
 
 # Include optional tests
-bun run generate -- --include-optional
+npx json-schema-testgen --include-optional
 
 # Custom output directory
-bun run generate -- --output ./my-tests
-
-# Show all options
-bun run generate -- --help
+npx json-schema-testgen --output ./my-tests
 ```
+
+## CLI options
+
+| Option | Description | Default |
+|---|---|---|
+| `--runner <runner>` | Test runner: `bun`, `vitest`, `jest` | `bun` |
+| `--drafts <list>` | Comma-separated drafts to include | all drafts |
+| `--include-optional` | Include optional tests | `false` |
+| `--output <dir>` | Output directory | `./generated-tests` |
+| `--version` | Show version | |
+| `--help` | Show help message | |
 
 ## Plugging in your validator
 
-Edit `setup.ts` to wire up your JSON Schema validator:
+Create a setup file that calls `setValidator` before tests run:
 
 ```ts
-import { setValidator } from "./src/adapter.ts";
+import { setValidator } from "json-schema-testgen";
 
 setValidator((schema, data, draft) => {
   // Return { valid: boolean, errors?: string[] }
@@ -62,11 +60,11 @@ setValidator((schema, data, draft) => {
 });
 ```
 
-Then run:
+How you preload the setup file depends on the runner:
 
-```bash
-bun test
-```
+- **Bun** — add `preload = ["./setup.ts"]` to `bunfig.toml`, then `bun test`
+- **Vitest** — add `setupFiles: ["./setup.ts"]` to your vitest config, then `vitest`
+- **Jest** — add `setupFilesAfterFramework: ["./setup.ts"]` to your jest config, then `jest`
 
 ## Supported drafts
 
@@ -91,12 +89,17 @@ Got:      valid
 Errors: type mismatch: expected integer
 ```
 
-## Rebuilding test data
+## Development
 
-When the upstream test suite updates:
+```bash
+bun install
+git submodule update --init   # fetch the official test suite
+bun run build-data            # embed test data into src/test-data.ts
+```
+
+To update when the upstream test suite changes:
 
 ```bash
 cd official-tests && git pull origin main && cd ..
 bun run build-data
-bun run generate
 ```
