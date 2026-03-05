@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build-data": "bun src/build-test-data.ts",
-    "generate": "bun src/cli.ts"
+    "generate": "bun src/cli.ts",
+    "build": "bun build --compile src/cli.ts --outfile json-schema-testgen"
   },
   "devDependencies": {
     "@types/bun": "latest"
