@@ -1,17 +1,34 @@
 {
-  "name": "json-schema-typescript-testing",
-  "module": "index.ts",
+  "name": "json-schema-testgen",
+  "version": "0.1.0",
+  "description": "Generate test files from the official JSON-Schema-Test-Suite",
   "type": "module",
-  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "json-schema-testgen": "./dist/src/cli.js"
+  },
+  "files": [
+    "dist",
+    "setup.ts"
+  ],
   "scripts": {
     "build-data": "bun src/build-test-data.ts",
     "generate": "bun src/cli.ts",
-    "build": "bun build --compile src/cli.ts --outfile json-schema-testgen"
+    "build": "bun run build-data && bunx tsc -p tsconfig.build.json",
+    "prepublishOnly": "bun run build"
   },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
-  }
+  },
+  "license": "MIT"
 }

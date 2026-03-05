@@ -1,2 +1,7 @@
 [tools]
 bun = "latest"
+"npm:publint" = "latest"
+
+[tasks.publint]
+run = "bun run build && publint"
+description = "Build and run publint"

@@ -1,18 +1,36 @@
-import { join, relative, sep } from "path";
-import { rmSync, mkdirSync } from "fs";
+import { join, relative, sep, dirname } from "path";
+import { rmSync, mkdirSync, writeFileSync } from "fs";
+import { fileURLToPath } from "url";
 import { testData, type TestGroup } from "./test-data.ts";
+
+export type TestRunner = "bun" | "vitest" | "jest";
 
 export interface GenerateOptions {
   drafts?: string[];
   includeOptional?: boolean;
   outputDir?: string;
+  runner?: TestRunner;
+}
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function testImportLine(runner: TestRunner): string {
+  switch (runner) {
+    case "bun":
+      return `import { describe, test, expect } from "bun:test";\n`;
+    case "vitest":
+      return `import { describe, test, expect } from "vitest";\n`;
+    case "jest":
+      return "";
+  }
 }
 
 export function generateTests(options: GenerateOptions = {}) {
   const {
     drafts = Object.keys(testData),
     includeOptional = false,
-    outputDir = join(import.meta.dir, "..", "generated-tests"),
+    outputDir = join(__dirname, "..", "generated-tests"),
+    runner = "bun",
   } = options;
 
   // Clean output directory
@@ -37,15 +55,11 @@ export function generateTests(options: GenerateOptions = {}) {
       const outDir = join(outFile, "..");
       mkdirSync(outDir, { recursive: true });
 
-      // Compute relative path from outDir to src/adapter.ts
-      const relToRoot = relative(outDir, join(import.meta.dir, ".."));
-      const adapterImport = relToRoot.split(sep).join("/") + "/src/adapter.ts";
-
       const stem = key.split("/").pop()!;
 
       let code = `// Auto-generated test file\n`;
-      code += `import { describe, test, expect } from "bun:test";\n`;
-      code += `import { validate } from "${adapterImport}";\n\n`;
+      code += testImportLine(runner);
+      code += `import { validate } from "json-schema-testgen";\n\n`;
       code += `const draft = ${JSON.stringify(draft)};\n\n`;
       code += `describe(${JSON.stringify(stem)}, () => {\n`;
 
@@ -74,7 +88,7 @@ export function generateTests(options: GenerateOptions = {}) {
           code += `          \`Got:      ${gotLabel}\`,\n`;
           code += `          result.errors?.length ? \`Errors: \${result.errors.join("; ")}\` : "",\n`;
           code += `        ].filter(Boolean).join("\\n");\n`;
-          code += `        expect.unreachable(detail);\n`;
+          code += `        throw new Error(detail);\n`;
           code += `      }\n`;
           code += `    });\n\n`;
         }
@@ -84,7 +98,7 @@ export function generateTests(options: GenerateOptions = {}) {
 
       code += `});\n`;
 
-      Bun.write(outFile, code);
+      writeFileSync(outFile, code);
       draftCount++;
     }
 
@@ -93,9 +107,4 @@ export function generateTests(options: GenerateOptions = {}) {
   }
 
   console.log(`\nTotal: ${totalFiles} test files generated in ${outputDir}`);
-}
-
-// Allow direct execution
-if (import.meta.main) {
-  generateTests();
 }
