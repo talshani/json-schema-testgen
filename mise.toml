@@ -8,7 +8,7 @@ run = "bun run build && publint"
 description = "Build and run publint"
 
 [tasks.release]
-run = "bumpp --execute ./scripts/release-build.sh"
+run = "bumpp --execute './scripts/release-build.sh' --files dist/"
 description = "Bump version, rebuild dist, commit, and tag"
 
 [tasks.test-pack]
