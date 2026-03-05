@@ -1,6 +1,6 @@
 {
   "name": "json-schema-testgen",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Generate test files from the official JSON-Schema-Test-Suite",
   "type": "module",
   "exports": {
