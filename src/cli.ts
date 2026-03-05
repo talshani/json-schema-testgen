@@ -4,8 +4,9 @@ import { resolve } from "path";
 import { generateTests, type TestRunner } from "./generate-tests.ts";
 import { testSuiteCommit } from "./test-data.ts";
 
-declare var __VERSION__: string;
-const VERSION = typeof __VERSION__ !== "undefined" ? __VERSION__ : "dev";
+// @ts-ignore — resolved at build time by bun's bundler
+import pkg from "../package.json" with { type: "json" };
+const VERSION = pkg.version;
 
 const RUNNERS = ["bun", "vitest", "jest"] as const;
 

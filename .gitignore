@@ -38,3 +38,5 @@ generated-tests/
 
 # generated embedded test data
 src/test-data.ts
+
+tmp/
