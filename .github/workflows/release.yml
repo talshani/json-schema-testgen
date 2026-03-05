@@ -24,11 +24,13 @@ jobs:
 
       - name: Build binaries
         run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          DEFINE="--define __VERSION__='\"${VERSION}\"'"
           mkdir -p dist
-          bun build --compile --target=bun-linux-x64 src/cli.ts --outfile dist/json-schema-testgen-linux-x64
-          bun build --compile --target=bun-linux-arm64 src/cli.ts --outfile dist/json-schema-testgen-linux-arm64
-          bun build --compile --target=bun-darwin-x64 src/cli.ts --outfile dist/json-schema-testgen-darwin-x64
-          bun build --compile --target=bun-darwin-arm64 src/cli.ts --outfile dist/json-schema-testgen-darwin-arm64
+          bun build --compile ${DEFINE} --target=bun-linux-x64 src/cli.ts --outfile dist/json-schema-testgen-linux-x64
+          bun build --compile ${DEFINE} --target=bun-linux-arm64 src/cli.ts --outfile dist/json-schema-testgen-linux-arm64
+          bun build --compile ${DEFINE} --target=bun-darwin-x64 src/cli.ts --outfile dist/json-schema-testgen-darwin-x64
+          bun build --compile ${DEFINE} --target=bun-darwin-arm64 src/cli.ts --outfile dist/json-schema-testgen-darwin-arm64
 
       - name: Package archives
         run: |
