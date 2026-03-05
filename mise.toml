@@ -1,5 +1,6 @@
 [tools]
 bun = "latest"
+"npm:bumpp" = "latest"
 "npm:publint" = "latest"
 
 [tasks.publint]
