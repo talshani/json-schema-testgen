@@ -14,6 +14,16 @@ export interface GenerateOptions {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+const ADAPTER_DTS = `type ValidateResult = { valid: boolean; errors?: string[] };
+type ValidateFn = (schema: unknown, data: unknown, draft: string) => ValidateResult;
+
+declare global {
+  var __jsonSchemaTestgenValidate: ValidateFn;
+}
+
+export {};
+`;
+
 function testImportLine(runner: TestRunner): string {
   switch (runner) {
     case "bun":
@@ -35,6 +45,10 @@ export function generateTests(options: GenerateOptions = {}) {
 
   // Clean output directory
   rmSync(outputDir, { recursive: true, force: true });
+  mkdirSync(outputDir, { recursive: true });
+
+  // Write adapter type declaration at output root
+  writeFileSync(join(outputDir, "adapter.d.ts"), ADAPTER_DTS);
 
   let totalFiles = 0;
 
@@ -55,11 +69,13 @@ export function generateTests(options: GenerateOptions = {}) {
       const outDir = join(outFile, "..");
       mkdirSync(outDir, { recursive: true });
 
+      const adapterRelPath = relative(outDir, join(outputDir, "adapter.d.ts")).split(sep).join("/");
       const stem = key.split("/").pop()!;
 
       let code = `// Auto-generated test file\n`;
+      code += `/// <reference path="${adapterRelPath}" />\n`;
       code += testImportLine(runner);
-      code += `import { validate } from "json-schema-testgen";\n\n`;
+      code += `const validate = globalThis.__jsonSchemaTestgenValidate;\n\n`;
       code += `const draft = ${JSON.stringify(draft)};\n\n`;
       code += `describe(${JSON.stringify(stem)}, () => {\n`;
 

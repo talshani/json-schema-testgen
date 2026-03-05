@@ -1,5 +1,3 @@
-import { setValidator } from "./src/adapter.ts";
-
 // Plug in your validator implementation here.
 // The `draft` parameter is a string like "draft2020-12" so you can
 // route to the correct dialect.
@@ -10,6 +8,6 @@ import { setValidator } from "./src/adapter.ts";
 //
 // If your implementation needs remote schema resolution,
 // configure it here (e.g. mapping http://localhost:1234/* to official-tests/remotes/).
-setValidator((schema, data, draft) => {
+globalThis.__jsonSchemaTestgenValidate = (schema, data, draft) => {
   throw new Error("TODO: plug in your validator");
-});
+};
