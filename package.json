@@ -3,6 +3,10 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "build-data": "bun src/build-test-data.ts",
+    "generate": "bun src/cli.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
