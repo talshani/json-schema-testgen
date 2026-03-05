@@ -8,8 +8,16 @@ run = "bun run build && publint"
 description = "Build and run publint"
 
 [tasks.release]
-run = "bumpp --execute './scripts/release-build.sh' --files dist/"
-description = "Bump version, rebuild dist, commit, and tag"
+run = """
+bun pm version patch --no-git-tag-version
+bun run build
+VERSION=$(bun pm pkg get version | tr -d '"')
+git add -A
+git commit -m "chore: release v$VERSION"
+git tag "v$VERSION"
+git push && git push --tags
+"""
+description = "Bump version, rebuild dist, commit, tag, and push"
 
 [tasks.test-pack]
 run = """

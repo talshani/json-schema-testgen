@@ -2,7 +2,8 @@
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { generateTests, type TestRunner } from "./generate-tests.ts";
-import { packageVersion, testSuiteCommit } from "./test-data.ts";
+import { packageVersion } from "./version.ts";
+import { testSuiteCommit } from "./test-data.ts";
 
 const RUNNERS = ["bun", "vitest", "jest"] as const;
 

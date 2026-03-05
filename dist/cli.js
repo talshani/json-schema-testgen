@@ -2,7 +2,8 @@
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { generateTests } from "./generate-tests.js";
-import { packageVersion, testSuiteCommit } from "./test-data.js";
+import { packageVersion } from "./version.js";
+import { testSuiteCommit } from "./test-data.js";
 const RUNNERS = ["bun", "vitest", "jest"];
 const { values } = parseArgs({
     args: process.argv.slice(2),
