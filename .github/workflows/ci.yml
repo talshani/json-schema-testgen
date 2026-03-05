@@ -1,0 +1,22 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check-dist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run build
+      - name: Check dist is up-to-date
+        run: |
+          if ! git diff --exit-code dist/; then
+            echo "dist/ is out of date. Run 'bun run build' and commit the result."
+            exit 1
+          fi
