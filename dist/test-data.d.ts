@@ -1,4 +1,4 @@
-export declare const testSuiteCommit = "583d7c62c9f5fc382530d59e0fa01481a6d10470";
+export declare const testSuiteCommit = "e819f329268130e0ed5bbc87b071c83d8e02a68a";
 export interface TestCase {
     description: string;
     data: unknown;
